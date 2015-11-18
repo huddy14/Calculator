@@ -1,0 +1,4 @@
+-> TableLayout, z palca dodac table row, zmienic weight, buttony z przenosic do table row
+
+calculator ma dzialac na liczbach zmiennoprzecinkowych, double
+wyswietlanie wyniku: zaokraglanie do tylu miejsc ile miesci sie na ekranie
