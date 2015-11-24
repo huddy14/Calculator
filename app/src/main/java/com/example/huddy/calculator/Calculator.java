@@ -71,7 +71,7 @@ public class Calculator {
             else {
                 double rightVal = (Double) valStack.pop();
                 double leftVal = (Double) valStack.pop();
-                double rslt;
+                double rslt = 0.0;
 
                 switch (c) {
                     case '+': rslt = leftVal + rightVal; break;
@@ -79,7 +79,7 @@ public class Calculator {
                     case '*': rslt = leftVal * rightVal; break;
                     case '/': rslt = leftVal / rightVal; break;
                     default:
-                        rslt = 0;
+                        rslt = 0.0;
                         break;
                 }
 
