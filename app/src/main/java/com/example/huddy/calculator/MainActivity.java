@@ -14,21 +14,20 @@ import static com.example.huddy.calculator.R.id.button1;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button btnAdd;
-    private Button btnSub;
-    private Button btnDiv;
-    private Button btnMult;
-    private Button btnEquals;
-    private Button btnDot;
-    private Button one,two,three,four,five,six,seven,eight,nine,zero,btnClear;
     static final String RESULT = "result";
     static final String OPERATION = "operation";
-    private TextView tvResult;
-    private TextView tvOperation;
+    static final String BOOL_ISOPER = "isOper";
+    static final String BOOL_ISZEROFIRST = "isZeroFirst";
+    static final String BOOL_ISDOT = "isDot";
+    static final String BOOL_CANENTER = "canEnter";
+    static final String BOOL_EQUEALSCLICKED = "equealsClicked";
+    private Button one,two,three,four,five,six,seven,eight,nine,zero,btnClear,btnAdd,btnSub,btnDiv,btnMult,btnEquals,btnDot;
+    private TextView tvOperation,tvResult;
     private boolean isOper = false;
     private boolean isZeroFirst = true;
     private boolean isDot = false;
     private boolean canEnter = true;
+    private boolean EquealsClicked = false;
     private String result,operation;
     int i = 0;
 
@@ -45,6 +44,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             tvResult.setText(savedInstanceState.getString(RESULT));
             tvOperation.setText(savedInstanceState.getString(OPERATION));
+            isZeroFirst = savedInstanceState.getBoolean(BOOL_ISZEROFIRST);
+            isDot = savedInstanceState.getBoolean(BOOL_ISDOT);
+            canEnter = savedInstanceState.getBoolean(BOOL_CANENTER);
+            isOper = savedInstanceState.getBoolean(BOOL_ISOPER);
+            EquealsClicked = savedInstanceState.getBoolean(BOOL_EQUEALSCLICKED);
         }
 
 
@@ -57,9 +61,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Save the user's current game state
         savedInstanceState.putString(RESULT,result);
         savedInstanceState.putString(OPERATION,operation);
+        savedInstanceState.putBoolean(BOOL_CANENTER, canEnter);
+        savedInstanceState.putBoolean(BOOL_ISDOT, isDot);
+        savedInstanceState.putBoolean(BOOL_ISOPER, isOper);
+        savedInstanceState.putBoolean(BOOL_ISZEROFIRST, isZeroFirst);
+        savedInstanceState.putBoolean(BOOL_EQUEALSCLICKED,EquealsClicked);
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
     }
+
     /*
     initialization of view elements
     */
@@ -112,123 +122,125 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v)
     {
-        if(tvOperation.getText()=="0")clear_tvOperation();
+        if(tvOperation.getText().toString()=="0")tvOperation.setText("");
         int btnId = v.getId();
         switch(v.getId())
         {
             case R.id.button0:
-                String s = tvOperation.getText().toString();
-                if(!isZeroFirst || isDot) {
+                //String s = tvOperation.getText().toString();
+                if(isOper && canEnter)
+                {
                     operation = tvOperation.getText() + "0";
                     tvOperation.setText(operation);
+                    isOper = false;
+                    isZeroFirst = true;
+                    canEnter = false;
                 }
-                if(isOper)isZeroFirst=true;
-                isOper = false;
+                else if((!isZeroFirst || isDot) && canEnter) {
+                    operation = tvOperation.getText() + "0";
+                    tvOperation.setText(operation);
+                    isOper = false;
+                }
+                //if(isOper)isZeroFirst=true;
+
                 break;
 
             case R.id.button1:
                 if(canEnter) {
-                    operation = tvOperation.getText() + "1";
-                    tvOperation.setText(operation);
-                    isOper = false;
+                    numberClick('1');
                 }
                 break;
 
             case R.id.button2:
                 if(canEnter) {
-                    operation = tvOperation.getText() + "2";
-                    tvOperation.setText(operation);
-                    isOper = false;
+                    numberClick('2');
                 }
                 break;
             case R.id.button3:
                 if(canEnter) {
-                    operation = tvOperation.getText() + "3";
-                    tvOperation.setText(operation);
-                    isOper = false;
+                    numberClick('3');
                 }
                 break;
             case R.id.button4:
                 if(canEnter) {
-                    operation = tvOperation.getText() + "4";
-                    tvOperation.setText(operation);
-                    isOper = false;
+                    numberClick('4');
                 }
                 break;
             case R.id.button5:
                 if(canEnter) {
-                    operation = tvOperation.getText() + "5";
-                    tvOperation.setText(operation);
-                    isOper = false;
+                    numberClick('5');
                 }
                 break;
             case R.id.button6:
                 if(canEnter) {
-                    operation = tvOperation.getText() + "6";
-                    tvOperation.setText(operation);
-                    isOper = false;
+                    numberClick('6');
                 }
                 break;
             case R.id.button7:
                 if(canEnter) {
-                    operation = tvOperation.getText() + "7";
-                    tvOperation.setText(operation);
-                    isOper = false;
+                    numberClick('7');
                 }
                 break;
             case R.id.button8:
                 if(canEnter) {
-                    operation = tvOperation.getText() + "8";
-                    tvOperation.setText(operation);
-                    isOper = false;
+                    numberClick('8');
                 }
                 break;
             case R.id.button9:
                 if(canEnter) {
-                    operation = tvOperation.getText() + "9";
-                    tvOperation.setText(operation);
-                    isOper = false;
+                    numberClick('9');
                 }
                 break;
             //operation buttons
             case R.id.buttonAdd:
+                if(EquealsClicked)onEquealsClick();
                 if(!isOper)
                 {
-                    tvOperation.setText(tvOperation.getText()+" + ");
+                    operationClick('+');
                 }
                 break;
             case R.id.buttonSubstract:
-                tvOperation.setText(tvOperation.getText()+" - ");
-                isOper = true;
-                isDot = false;
+                if(EquealsClicked)onEquealsClick();
+                if(!isOper) {
+                    operationClick('-');
+                }
                 break;
             case R.id.buttonMultiiply:
-                tvOperation.setText(tvOperation.getText()+" * ");
-                isOper = true;
-                isDot = false;
+                if(EquealsClicked)onEquealsClick();
+                if(!isOper) {
+                    operationClick('*');
+                }
                 break;
             case R.id.buttonDevide:
-                tvOperation.setText(tvOperation.getText()+" / ");
-                isOper = true;
-                isDot = false;
+                if(EquealsClicked)onEquealsClick();
+                if(!isOper) {
+                    operationClick('/');
+                }
                 break;
             case R.id.buttonEquals:
                 if(!isOper) {
                     double res = Calculator.evalPostfix(Calculator.infixToPostfix(tvOperation.getText().toString()));
                     tvResult.setText("" + res);
                     result = ""+res;
+                    canEnter = false;isZeroFirst = false;
+                    EquealsClicked = true;
                 }
                 break;
             case R.id.buttonClear:
                 clear_tvOperation();
                 clear_tvResult();
+                result = "";
+                operation ="";
                 isDot = false;
                 canEnter = true;
                 break;
             case R.id.buttonDot:
-                if(!isDot && canEnter) {
+
+                if(!isDot) {
                     tvOperation.setText(tvOperation.getText() + ".");
                     isDot = true;
+                    isZeroFirst = false;
+                    canEnter = true;
                 }
                 break;
 
@@ -243,5 +255,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void clear_tvResult()
     {
         tvResult.setText("");
+    }
+
+    private void operationClick(char s)
+    {
+        operation = tvOperation.getText() + " "+s+" ";
+        tvOperation.setText(operation);
+        isOper = true;
+        isDot = false;
+        canEnter = true;
+        isZeroFirst = false;
+
+    }
+
+    private void numberClick(char s)
+    {
+        operation = tvOperation.getText()+""+ s;
+        tvOperation.setText(operation);
+        isOper = false;
+        isZeroFirst = false;
+    }
+
+    private void onEquealsClick()
+    {
+        tvResult.setText("");
+        tvOperation.setText(result);
+        isOper = false;
+        isZeroFirst = true;
+        isDot = false;
+        canEnter = true;
+        EquealsClicked = false;
+
     }
 }
